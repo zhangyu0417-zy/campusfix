@@ -69,6 +69,9 @@ def create_ticket():
         title = request.form.get("title", "").strip()
         room = request.form.get("room", "").strip()
         description = request.form.get("description", "").strip()
+        error = validate_ticket(title, room)
+        if error:
+            return error, 400
         db = get_db()
         db.execute(
             "INSERT INTO tickets (title, room, description) VALUES (?, ?, ?)",
@@ -83,3 +86,9 @@ def create_ticket():
 if __name__ == "__main__":
     # 仅开发用途；生产部署使用 gunicorn（第11次课）
     app.run(host="127.0.0.1", port=5000, debug=True)
+
+
+def validate_ticket(title, room):
+    if len(title) > 20:
+        return "标题不能超过20个字符"
+    return None
